@@ -10,7 +10,7 @@ function render(content){
     return html;
 };
 
-function div(content, c){
+function div(content, c=""){
 
     let html = fs.readFileSync("div.html").toString();
 
