@@ -1,0 +1,8 @@
+
+main,header,footer{
+    text-align: center;
+    min-height: 20vh;
+    border: 2px solid green;
+    padding: 2%;
+    margin-bottom: 1%;
+}
