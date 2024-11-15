@@ -6,3 +6,22 @@ main,header,footer{
     padding: 2%;
     margin-bottom: 1%;
 }
+form{
+
+    align-items: center;
+    display: grid;
+    grid-template-rows: 1fr 1fr 1fr;
+    grid-template-columns: auto auto;
+    gap: 2%;
+}
+#serviceName{
+    grid-column-start: 1;
+    grid-row-start: 1;
+}
+#bio{
+    grid-column-start: 1;
+    grid-row-start: 2;
+}
+input{
+    margin: 0.5%;
+}

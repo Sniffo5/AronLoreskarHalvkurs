@@ -1,3 +1,20 @@
-<div>
-    
-</div>
+<h3>Skapa tjänst</h3>
+<form action="/skapaTjanst" method="post">
+
+    <input type="text" name="serviceName" placeholder="Namn på tjänst" class="inputText">
+    <input type="text" name="bio" placeholder="Kort info om tjänsten" class="inputText" >
+    <input type="text" name="price" placeholder="Prisklass" class="inputText"> 
+    <input type="text" name="location" placeholder="Plats"class="inputText" >
+
+    <div>
+        <input type="radio" name="type" value="company">
+        <label for="company">Företag</label>
+    </div>
+    <div>
+        <input type="radio" name="type" value="person">
+        <label for="company">Privat person</label>
+    </div>
+
+    <input type="submit" value="Skapa">
+
+</form>
