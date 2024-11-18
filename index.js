@@ -12,7 +12,8 @@ app.listen(3000, () => console.log("http://localhost:3000/"));
 
 app.get("/", home);
 app.get("/login", login);
-app.get("/registrera", register);
+app.post("/registrera", register);
+app.get("/registrera", showRegister)
 app.get("/tjanster", tjanster);
 app.get("/skapatjanst", showCreateTjanst);
 app.get("/skapatjanst", createTjanst);
@@ -31,20 +32,30 @@ function home(req, res){
 function login(){};
 function tjanster(){};
 
-function register(){
+async function register(req, res){
 
-    if (x){
+    let data = req.body;
 
+    data.password = await bcrypt.hash(data.password, 12);
 
+    let users = JSON.parse(fs.readFileSync("users.json").toString());
 
-    }
-    else {
-        
-    }
+    let userExist = users.find(u=>u.email==data.email);
 
+    if(userExist) return res.send(render("User exists"));
 
+    users.push(data);
 
-};
+    fs.writeFileSync("users.json", JSON.stringify(users, null, 3));
+    
+    res.send(render("Registered"));
+}
+function showRegister(req, res){
+
+    let regForm = fs.readFileSync("templates/regForm.html").toString();
+    res.send(render(regForm));
+
+}
 function showCreateTjanst(){
 
     let x = "1";
