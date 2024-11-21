@@ -6,6 +6,8 @@ const app = express();
 app.use(express.urlencoded({extended:true}));
 const fs = require("fs");
 const {render, div} = require("./utils.js");
+const { getRandomValues } = require('crypto');
+const {v4: uuidv4} = require ('uuid');
 
 app.use(express.static("public"));
 app.listen(3000, () => console.log("http://localhost:3000/"));
@@ -15,22 +17,42 @@ app.get("/login", login);
 app.post("/registrera", register);
 app.get("/registrera", showRegister)
 app.get("/tjanster", tjanster);
-app.get("/skapatjanst", showCreateTjanst);
-app.get("/skapatjanst", createTjanst);
+app.get("/skapaTjanst", showCreateTjanst);
+app.post("/skapaTjanst", createTjanst);
 
 
 
 
 
 function home(req, res){
-    res.send(render(fs.readFileSync("templates/createTjanst.html").toString()));
+    res.send(render("Hem").toString());
+    generateId();
 }
 
 
 
 
 function login(){};
-function tjanster(){};
+function tjanster(req, res){
+
+    let services = JSON.parse(fs.readFileSync("services.json")).toString();
+
+    
+    let html = services.map(s=>(
+
+        `
+        <div id = "${s.id}">
+            <h3>${s.serviceName}</h3>
+            <p>${s.bio}</p>
+        </div>
+        `
+
+    )).join("");
+
+    console.log(html);
+
+
+};
 
 async function register(req, res){
 
@@ -56,13 +78,13 @@ function showRegister(req, res){
     res.send(render(regForm));
 
 }
-function showCreateTjanst(){
+function showCreateTjanst(req, res){
 
     let x = "1";
-    let y = "2"
+    let y = "1"
 
     if (x == y){
-        res.send(render(fs.readFileSync("createTjanst.html").toString()));
+        res.send(render(fs.readFileSync("templates/createTjanst.html").toString()));
     }
     else{
         res.redirect("/login");
@@ -70,12 +92,24 @@ function showCreateTjanst(){
 };
 
 function createTjanst(req, res){
+
     let data = req.body;
+
+    data.id = generateId();
+
+    console.log(data)
 
     let services = JSON.parse(fs.readFileSync("services.json").toString());
 
     services.push(data);
 
     fs.writeFileSync("services.json", JSON.stringify(services, null, 3));
+
+    res.redirect("/")
 }
 
+function generateId(){
+
+    return uuidv4();
+    
+}
