@@ -1,3 +1,18 @@
 [
-   
+   {
+      "id": "test-id-1",
+      "serviceName": "Test Service",
+      "bio": "This is a test service.",
+      "price": "100kr",
+      "location": "Test Location",
+      "type": "individual"
+   },
+   {
+      "serviceName": "ll,öl,ö",
+      "bio": ",löl,",
+      "price": "l,öl,",
+      "location": ",öll,",
+      "type": "company",
+      "id": "eff0552a-d8da-4d52-8f5f-9aa86fbc2d41"
+   }
 ]

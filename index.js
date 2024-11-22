@@ -8,6 +8,7 @@ const fs = require("fs");
 const {render, div} = require("./utils.js");
 const { getRandomValues } = require('crypto');
 const {v4: uuidv4} = require ('uuid');
+const escape = require('escape-html')
 
 app.use(express.static("public"));
 app.listen(3000, () => console.log("http://localhost:3000/"));
@@ -29,30 +30,26 @@ function home(req, res){
     generateId();
 }
 
+function tjanster(req, res) {
+    
+    let services = JSON.parse(fs.readFileSync("services.json").toString());
 
+    let servicesHtml = services.map(service => 
+        (`
+            <h2>${escape(service.serviceName)}</h2>
+            <p>${escape(service.bio)}</p>
+            <p>Pris: ${escape(service.price)}</p>
+            <p>Plats: ${escape(service.location)}</p>
+            <p>Typ: ${escape(service.type)}</p>
+        `)
+    ).join("\n");
+
+    res.send(render(servicesHtml));
+}
 
 
 function login(){};
-function tjanster(req, res){
-
-    let services = JSON.parse(fs.readFileSync("services.json")).toString();
-
-    
-    let html = services.map(s=>(
-
-        `
-        <div id = "${s.id}">
-            <h3>${s.serviceName}</h3>
-            <p>${s.bio}</p>
-        </div>
-        `
-
-    )).join("");
-
-    console.log(html);
-
-
-};
+const path = require("path");
 
 async function register(req, res){
 
