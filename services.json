@@ -1,18 +1,18 @@
 [
    {
-      "id": "test-id-1",
-      "serviceName": "Test Service",
-      "bio": "This is a test service.",
-      "price": "100kr",
-      "location": "Test Location",
-      "type": "individual"
+      "serviceName": "Gräsklippning",
+      "bio": "Klipper gräs och buskage",
+      "price": "200kr/h",
+      "location": "Halmstad",
+      "type": "företag",
+      "id": "46cbd43a-710a-4965-9f93-6bcb6f1ae7cc"
    },
    {
-      "serviceName": "ll,öl,ö",
-      "bio": ",löl,",
-      "price": "l,öl,",
-      "location": ",öll,",
-      "type": "company",
-      "id": "eff0552a-d8da-4d52-8f5f-9aa86fbc2d41"
+      "serviceName": "Biltvätt",
+      "bio": "Tvättar alla slags fordon",
+      "price": "300kr + 70kr/h",
+      "location": "Laholm",
+      "type": "person",
+      "id": "487dac90-2447-49aa-a897-896cf9d74606"
    }
 ]

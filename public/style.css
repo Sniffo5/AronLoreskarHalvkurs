@@ -25,3 +25,11 @@ form{
 input{
     margin: 0.5%;
 }
+.service{
+    border: 1px solid red;
+    padding: 2%;
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-template-rows: auto;
+}
+
