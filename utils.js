@@ -1,5 +1,14 @@
 const fs = require("fs");
 
+/* 
+if (!req.session){
+        html = html.replace("**log**", '<a href="/login">Logga in</a>');
+    }
+    else{
+        html = html.replace("**log**", '<a href="/logout">Logga ut</a>');
+    }   
+*/
+
 
 function render(content){
 
