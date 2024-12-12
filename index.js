@@ -52,7 +52,7 @@ function tjanster(req, res) {
     
     let servicesHtml = services.map(service => 
         (`
-            <div id = "${(service.id)}">
+            <div id = "${(service.id)}" class ="service">
             <h2>${(service.serviceName)}</h2>
             <p>${(service.bio)}</p>
             <p>Pris: ${(service.price)}</p>
@@ -111,6 +111,7 @@ async function login(req,res){
     req.session.id = userExist.id;
 
     res.send(render("Välkommen tillbaka " + userExist.email));
+    console.log(req.session)
 
 }
 
@@ -119,9 +120,11 @@ function showLogin(req, res){
     if(!req.session.loggedIn == true){
         let logForm = fs.readFileSync("templates/logForm.html").toString();
         res.send(render(logForm));    
+
     }
     else{
         res.redirect("/")
+        
     }
 }
 
@@ -129,6 +132,8 @@ function logOut(req, res){
     req.session.destroy();
     res.redirect(render("Utloggad"));
 }
+
+
 
 
 
@@ -179,6 +184,7 @@ function createTjanst(req, res){
 
     if(data.serviceName && data.bio && data.price && data.location && data.type){
         data.id = generateId();
+        
 
         console.log(data)
     
@@ -201,3 +207,4 @@ function generateId(){
     return uuidv4();
     
 }
+
