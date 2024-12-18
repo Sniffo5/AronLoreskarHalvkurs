@@ -12,17 +12,23 @@ if (!req.session){
 
 
 
-function render(content){
+function render(content, session = {}) {
 
     let html = fs.readFileSync("templates/template.html").toString();
 
+    
+    if (session.loggedIn == true) {
+        html = html.replace("**log**", '<a href="/skapaTjanst">Skapa tjänst</a> | <a href="/logout">Logga ut</a>');
+    } else {
+        html = html.replace("**log**", '<a href="/registrera">Registrera</a> | <a href="/login">Logga in</a>');
+    }
+
+    
     html = html.replace("**content**", content);
 
-
-
-
     return html;
-};
+}
+
 
 
 

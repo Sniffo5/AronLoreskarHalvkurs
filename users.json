@@ -1,7 +1,32 @@
 [
    {
-      "email": "j@gmail.com",
-      "password": "$2a$12$Bym5eYZh.I7pOIzHmaVTh.HZdwRD.LFh2y5zAk6JjkdAXHPE09pma",
-      "id": "b09d86f9-cdf9-42bf-a610-dfa61a7a9bce"
+      "email": "aron@loreskar.se",
+      "password": "$2a$12$2yREBTJJTEbDM0VXkv3lzO.4NoKGsVmpYwpjmcmQtb7t5soGYjpWy",
+      "id": "29ffa8bd-00ab-4f1f-88cf-68a936597287",
+      "isAdmin": true
+   },
+   {
+      "email": "a@a.se",
+      "password": "$2a$12$9PlJCxveByLH4lvL.BUnce2/KgB/SdwxPdUBfSF0OYNfu7h2Kbiym",
+      "id": "fdc3044c-56a4-4bba-bb93-dc630e07d14e",
+      "isAdmin": false
+   },
+   {
+      "email": "b@b.se",
+      "password": "$2a$12$mAsUCkKBL6PwwlPDr0yqROirtR4dcZ7SuoBDOyaCHIwTVSmhhohDW",
+      "id": "bc229252-ce26-471b-8ed3-234eaffcc5a3",
+      "isAdmin": false
+   },
+   {
+      "email": "c@c.se",
+      "password": "$2a$12$ggNfWceHx0vH9Jyi4pousOZXmi/2Wr1v23fMdoGUsUfOHzYDFA2MC",
+      "id": "1fbfbc22-1528-4813-884c-53092438a7a7",
+      "isAdmin": false
+   },
+   {
+      "email": "ujmyuk@a.s",
+      "password": "$2a$12$MqjleRxIPmQa5bx1d0uiI.zDbh7R0vHRr1aa2HgDvGetPd7tAn/le",
+      "id": "0ffc29e1-a9c4-4f31-a9f9-963ec9e8484e",
+      "isAdmin": false
    }
 ]

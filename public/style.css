@@ -4,7 +4,8 @@
 main,header,footer{
     text-align: center;
     min-height: 20vh;
-    border: 2px solid green;
+    border: 3px solid green;
+    background-color: lightgreen;
     padding: 2%;
     margin-bottom: 10px;
     border-radius: 5px;
@@ -29,7 +30,8 @@ input{
     margin: 0.5%;
 }
 .service{
-    border: 1px solid red;
+    border: 3px solid blue;
+    background-color: lightblue;
     padding: 2%;
     display: grid;
     grid-template-columns: auto auto;
