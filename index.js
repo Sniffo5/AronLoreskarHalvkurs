@@ -30,13 +30,13 @@ app.use(session({
 app.get("/", home);
 app.post("/login", login);
 app.get("/login", showLogin);
-app.post("/registrera", register);
-app.get("/registrera", showRegister)
-app.get("/tjanster", tjanster);
-app.get("/skapaTjanst", showCreateTjanst);
-app.post("/skapaTjanst", createTjanst);
+app.post("/register", register);
+app.get("/register", showRegister)
+app.get("/services", services);
+app.get("/createService", showcreateService);
+app.post("/createService", createService);
 app.get("/logout", logOut);
-app.delete("/deleteTjanst/:id", deleteTjanst);
+app.post("/deleteService/:id", deleteService);
 
 
 
@@ -51,28 +51,11 @@ function home(req, res) {
 
 
 
-function tjanster(req, res) {
+function services(req, res) {
     let services = JSON.parse(fs.readFileSync("services.json").toString());
 
     let servicesHtml = services.map(service => {
-        let deleteButton = "";
-
-        if (req.session.loggedIn && (service.userId === req.session.id || req.session.isAdmin == true)) {
-            deleteButton = `<form action="/deleteTjanst/${service.id}" method="DELETE">
-                                <button type="submit">Ta bort</button>
-                            </form>`;
-        }
-
-        return `
-            <div id="${service.id}" class="service">
-                <h2>${service.serviceName}</h2>
-                <p>${service.bio}</p>
-                <p>Pris: ${service.price}</p>
-                <p>Plats: ${service.location}</p>
-                <p> i${service.type} ${(service.type)}</p>
-                ${deleteButton}
-            </div>
-        `;
+        return showServices(service, req)
     }).join("\n");
 
     servicesHtml = servicesHtml.replaceAll("iföretag", iconC);
@@ -87,20 +70,37 @@ function showTop() {
     let services = JSON.parse(fs.readFileSync("services.json").toString());
 
     let service = services[0];
-    let servicesHtml = `
-            <div id = "${(service.id)}" class="service">
-            <h2>${(service.serviceName)}</h2>
-            <p>${(service.bio)}</p>
-            <p>Pris: ${(service.price)}</p>
-            <p>Plats: ${(service.location)}</p>
-            <p> i${service.type} ${(service.type)}</p>
-            </div>
-        `
+    let servicesHtml = showServices(service, null);
 
     servicesHtml = servicesHtml.replaceAll("iföretag", iconC)
     servicesHtml = servicesHtml.replaceAll("iperson", iconP)
 
     return servicesHtml
+}
+
+function showServices(service, req){
+    let deleteButton = "";
+
+    if(req != null){
+        if (req.session.loggedIn && (service.userId === req.session.userId || req.session.isAdmin == true)) {
+            deleteButton = `<form action="/deleteService/${service.id}" method="post">
+                                <button type="submit">Ta bort</button>
+                            </form>`;
+        }
+    
+    }
+    
+    return `
+    <div id = "${(service.id)}" class="service">
+    <h2>${(escape(service.serviceName))}</h2>
+    <p>${escape((service.bio))}</p>
+    <p>Pris: ${escape((service.price))}</p>
+    <p>Plats: ${escape((service.location))}</p>
+    <p> i${escape(service.type)} ${escape((service.type))}</p>
+    ${deleteButton}
+    </div>
+    
+    `
 }
 
 
@@ -150,7 +150,7 @@ async function register(req, res) {
     let data = req.body;
 
     if (!validator.isEmail(data.email) || data.password == "") {
-        return res.redirect("/registrera");
+        return res.redirect("/register");
     }
 
     data.password = await bcrypt.hash(data.password, 12);
@@ -184,16 +184,16 @@ function showRegister(req, res) {
     res.send(render(regForm, req.session));
 }
 
-function showCreateTjanst(req, res) {
+function showcreateService(req, res) {
     if (req.session.loggedIn == true) {
-        res.send(render(fs.readFileSync("templates/createTjanst.html").toString(), req.session));
+        res.send(render(fs.readFileSync("templates/createService.html").toString(), req.session));
     } else {
         res.redirect("/login");
     }
 }
 
 
-function createTjanst(req, res) {
+function createService(req, res) {
     if (req.session.loggedIn) {
         let data = req.body;
 
@@ -207,14 +207,14 @@ function createTjanst(req, res) {
 
             res.redirect("/");
         } else {
-            res.redirect("/skapaTjanst");
+            res.redirect("/createService");
         }
     } else {
         res.redirect("/login");
     }
 }
 
-function deleteTjanst(req, res) {
+function deleteService(req, res) {
     let serviceId = req.params.id;
     let services = JSON.parse(fs.readFileSync("services.json").toString());
     
@@ -223,9 +223,9 @@ function deleteTjanst(req, res) {
     if (serviceToDelete && (serviceToDelete.userId == req.session.userId || req.session.isAdmin)) {
         let filteredServices = services.filter(service => service.id !== serviceId);
         fs.writeFileSync("services.json", JSON.stringify(filteredServices, null, 3));
-        res.redirect("/tjanster");
+        res.redirect("/services");
     } else {
-        res.redirect("/tjanster");
+        res.redirect("/services");
     }
 }
 

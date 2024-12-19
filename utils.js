@@ -18,9 +18,9 @@ function render(content, session = {}) {
 
     
     if (session.loggedIn == true) {
-        html = html.replace("**log**", '<a href="/skapaTjanst">Skapa tjänst</a> | <a href="/logout">Logga ut</a>');
+        html = html.replace("**log**", '<a href="/createService">Skapa tjänst</a> | <a href="/logout">Logga ut</a>');
     } else {
-        html = html.replace("**log**", '<a href="/registrera">Registrera</a> | <a href="/login">Logga in</a>');
+        html = html.replace("**log**", '<a href="/register">Registrera</a> | <a href="/login">Logga in</a>');
     }
 
     // vfixa så att koden ovanfgör är i en anna n funktion, har args i render och ifall det finns någon header argument körs renderheader
