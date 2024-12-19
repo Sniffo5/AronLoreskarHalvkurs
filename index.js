@@ -36,7 +36,7 @@ app.get("/tjanster", tjanster);
 app.get("/skapaTjanst", showCreateTjanst);
 app.post("/skapaTjanst", createTjanst);
 app.get("/logout", logOut);
-app.post("/deleteTjanst/:id", deleteTjanst);
+app.delete("/deleteTjanst/:id", deleteTjanst);
 
 
 
@@ -58,7 +58,7 @@ function tjanster(req, res) {
         let deleteButton = "";
 
         if (req.session.loggedIn && (service.userId === req.session.id || req.session.isAdmin == true)) {
-            deleteButton = `<form action="/deleteTjanst/${service.id}" method="POST">
+            deleteButton = `<form action="/deleteTjanst/${service.id}" method="DELETE">
                                 <button type="submit">Ta bort</button>
                             </form>`;
         }
@@ -86,14 +86,14 @@ function tjanster(req, res) {
 function showTop() {
     let services = JSON.parse(fs.readFileSync("services.json").toString());
 
-
+    let service = services[0];
     let servicesHtml = `
-            <div id = "${(services[0].id)}" class="service">
-            <h2>${(services[0].serviceName)}</h2>
-            <p>${(services[0].bio)}</p>
-            <p>Pris: ${(services[0].price)}</p>
-            <p>Plats: ${(services[0].location)}</p>
-            <p> i${services[0].type} ${(services[0].type)}</p>
+            <div id = "${(service.id)}" class="service">
+            <h2>${(service.serviceName)}</h2>
+            <p>${(service.bio)}</p>
+            <p>Pris: ${(service.price)}</p>
+            <p>Plats: ${(service.location)}</p>
+            <p> i${service.type} ${(service.type)}</p>
             </div>
         `
 

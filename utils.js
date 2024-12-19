@@ -23,7 +23,9 @@ function render(content, session = {}) {
         html = html.replace("**log**", '<a href="/registrera">Registrera</a> | <a href="/login">Logga in</a>');
     }
 
-    
+    // vfixa så att koden ovanfgör är i en anna n funktion, har args i render och ifall det finns någon header argument körs renderheader
+
+
     html = html.replace("**content**", content);
 
     return html;
