@@ -5,7 +5,7 @@ const session = require('express-session');
 const app = express();
 app.use(express.urlencoded({ extended: true }));
 const fs = require("fs");
-const { render, div } = require("./utils.js");
+const { render, sendEmail } = require("./utils.js");
 const { v4: uuidv4 } = require('uuid');
 const escape = require('escape-html')
 const validator = require('validator');
@@ -37,6 +37,7 @@ app.get("/createService", showcreateService);
 app.post("/createService", createService);
 app.get("/logout", logOut);
 app.post("/deleteService/:id", deleteService);
+app.get("/verify", verify);
 
 
 
@@ -47,6 +48,7 @@ function home(req, res) {
 
 
 
+/* ---------------------------------------------------------- */
 
 
 
@@ -64,6 +66,7 @@ function services(req, res) {
     res.send(render(servicesHtml, req.session));
 }
 
+/* ---------------------------------------------------------- */
 
 
 function showTop() {
@@ -78,18 +81,21 @@ function showTop() {
     return servicesHtml
 }
 
-function showServices(service, req){
+/* ---------------------------------------------------------- */
+
+
+function showServices(service, req) {
     let deleteButton = "";
 
-    if(req != null){
+    if (req != null) {
         if (req.session.loggedIn && (service.userId === req.session.userId || req.session.isAdmin == true)) {
             deleteButton = `<form action="/deleteService/${service.id}" method="post">
                                 <button type="submit">Ta bort</button>
                             </form>`;
         }
-    
+
     }
-    
+
     return `
     <div id = "${(service.id)}" class="service">
     <h2>${(escape(service.serviceName))}</h2>
@@ -103,28 +109,36 @@ function showServices(service, req){
     `
 }
 
+/* ---------------------------------------------------------- */
+
+
 
 async function login(req, res) {
     let data = req.body;
     let users = JSON.parse(fs.readFileSync("users.json").toString());
-    let userExist = users.find(u => u.email == data.email);
+    let userFind = users.find(u => u.email == data.email);
 
-    if (!userExist) {
+    if (!userFind) {
         return res.redirect("/login");
     }
 
-    let check = await bcrypt.compare(data.password, userExist.password);
+    if(!userFind.isVerified){
+        res.redirect(render("Kolla din mail för verifieringsemail", req.session));
+    }
+
+    let check = await bcrypt.compare(data.password, userFind.password);
     if (!check) return res.redirect("/login?wrong_credentials");
 
-    req.session.email = userExist.email;
+    req.session.email = userFind.email;
     req.session.loggedIn = true;
-    req.session.isAdmin = userExist.isAdmin;
-    req.session.userId = userExist.id;
+    req.session.isAdmin = userFind.isAdmin;
+    req.session.userId = userFind.id;
 
-    res.send(render("Välkommen tillbaka " + escape(userExist.email), req.session));
+    res.send(render("Välkommen tillbaka " + escape(userFind.email), req.session));
     console.log(req.session);
 }
 
+/* ---------------------------------------------------------- */
 
 
 
@@ -138,12 +152,16 @@ function showLogin(req, res) {
     }
 }
 
+/* ---------------------------------------------------------- */
+
 
 function logOut(req, res) {
     req.session.destroy(() => {
         res.send(render("Utloggad"));
     });
 }
+
+/* ---------------------------------------------------------- */
 
 
 async function register(req, res) {
@@ -153,12 +171,17 @@ async function register(req, res) {
         return res.redirect("/register");
     }
 
+    const token = generateId();
+    data.token = token;
+
+    data.isVerified = false;
+
     data.password = await bcrypt.hash(data.password, 12);
     data.id = generateId();
 
     let users = JSON.parse(fs.readFileSync("users.json").toString());
-    let userExist = users.find(u => u.email == data.email);
-    if (userExist) {
+    let userFind = users.find(u => u.email == data.email);
+    if (userFind) {
         return res.send(render("User exists", req.session));
     }
 
@@ -171,18 +194,68 @@ async function register(req, res) {
     req.session.loggedIn = true;
     req.session.userId = data.id;
     req.session.isAdmin = data.isAdmin;
+    req.session.isVerified = data.isVerified;
 
-    console.log(req.session.userId)
-    console.log(data.id)
+    console.log(req.session.userId);
+    console.log(data.id);
 
-    res.send(render(`Välkommen, ${data.email}! Du är nu registrerad och inloggad.`, req.session));
+    sendVerificationEmail(data.email, token);
+
+    res.send(render(`Välkommen, ${data.email}! Ditt konto har skapats. Kolla din inkorg för att verifiera det.`, req.session));
 }
 
+/* ---------------------------------------------------------- */
+
+async function sendVerificationEmail(userEmail, token) {
+
+    const emailContent = `
+      <h1>Välkommen till Proffstorget!</h1>
+      <p>Tryck på länken för att verifiera ditt konto</p>
+      <a href="http://localhost:3000/verify?token=${token}">Verifiera konto</a>
+    `;
+
+    await sendEmail(userEmail, 'Verifiera ditt konto', emailContent);
+}
+
+
+/* ---------------------------------------------------------- */
+
+ function verify(req, res){
+
+    if (req.session.isVerified){
+        res.redirect("/");
+    }
+
+    const token = req.query.token;
+
+    let users = JSON.parse(fs.readFileSync("users.json").toString());
+    let userFind = users.find(u => u.token == token);
+
+    if (!userFind) {
+        return res.redirect("/");
+    }
+
+    userFind.isVerified = true;
+    req.session.isVerified = true;
+
+    users = users.filter(user => user.token != token);
+
+    users.push(userFind);
+    fs.writeFileSync("users.json", JSON.stringify(users, null, 3));
+
+    res.send(render("Välkommen " + escape(userFind.email), req.session));
+
+}
+
+/* ---------------------------------------------------------- */
 
 function showRegister(req, res) {
     let regForm = fs.readFileSync("templates/regForm.html").toString();
     res.send(render(regForm, req.session));
 }
+
+/* ---------------------------------------------------------- */
+
 
 function showcreateService(req, res) {
     if (req.session.loggedIn == true) {
@@ -191,6 +264,9 @@ function showcreateService(req, res) {
         res.redirect("/login");
     }
 }
+
+/* ---------------------------------------------------------- */
+
 
 
 function createService(req, res) {
@@ -201,6 +277,7 @@ function createService(req, res) {
             data.id = generateId();
             data.userId = req.session.userId;
             let services = JSON.parse(fs.readFileSync("services.json").toString());
+            
             services.push(data);
 
             fs.writeFileSync("services.json", JSON.stringify(services, null, 3));
@@ -214,12 +291,15 @@ function createService(req, res) {
     }
 }
 
+/* ---------------------------------------------------------- */
+
+
 function deleteService(req, res) {
     let serviceId = req.params.id;
     let services = JSON.parse(fs.readFileSync("services.json").toString());
-    
+
     let serviceToDelete = services.find(service => service.id == serviceId);
-    
+
     if (serviceToDelete && (serviceToDelete.userId == req.session.userId || req.session.isAdmin)) {
         let filteredServices = services.filter(service => service.id !== serviceId);
         fs.writeFileSync("services.json", JSON.stringify(filteredServices, null, 3));
@@ -229,6 +309,7 @@ function deleteService(req, res) {
     }
 }
 
+/* ---------------------------------------------------------- */
 
 
 function generateId() {

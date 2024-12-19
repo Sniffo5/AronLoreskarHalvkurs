@@ -1,16 +1,5 @@
 const fs = require("fs");
-
-/* 
-if (!req.session){
-        html = html.replace("**log**", '<a href="/login">Logga in</a>');
-    }
-    else{
-        html = html.replace("**log**", '<a href="/logout">Logga ut</a>');
-    }   
-*/
-
-
-
+const nodemailer = require('nodemailer');
 
 function render(content, session = {}) {
 
@@ -31,13 +20,31 @@ function render(content, session = {}) {
     return html;
 }
 
+/* ---------------------------------------------------------- */
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'proffstorgetab@gmail.com',
+      pass: 'aolj hnok mtuc yfvb' 
+    }
+  });
+
+  async function sendEmail(to, subject, htmlContent){
+    try {
+        await transporter.sendMail({
+          from: '"Proffstorget" <proffstorgetab@gmail.com>', 
+          to,                                           
+          subject,                                      
+          html: htmlContent                             
+        });
+        console.log('Email sent successfully');
+      } catch (error) {
+        console.error('Error sending email:', error);
+      }
+  }
+
+  
 
 
-
-function div(content, c=""){
-    return `<div class="${c}">
-    ${content}
-    </div>`;
-}
-
-module.exports = {render, div};
+module.exports = {render, sendEmail};
