@@ -122,8 +122,8 @@ async function login(req, res) {
         return res.redirect("/login");
     }
 
-    if(!userFind.isVerified){
-        res.redirect(render("Kolla din mail för verifieringsemail", req.session));
+    if (!userFind.isVerified) {
+        return res.send(render("Kolla din mail för verifieringsemail", req.session));
     }
 
     let check = await bcrypt.compare(data.password, userFind.password);
@@ -135,7 +135,7 @@ async function login(req, res) {
     req.session.userId = userFind.id;
 
     res.send(render("Välkommen tillbaka " + escape(userFind.email), req.session));
-    console.log(req.session);
+    
 }
 
 /* ---------------------------------------------------------- */
@@ -191,13 +191,10 @@ async function register(req, res) {
     fs.writeFileSync("users.json", JSON.stringify(users, null, 3));
 
     req.session.email = data.email;
-    req.session.loggedIn = true;
+    req.session.loggedIn = false;
     req.session.userId = data.id;
     req.session.isAdmin = data.isAdmin;
     req.session.isVerified = data.isVerified;
-
-    console.log(req.session.userId);
-    console.log(data.id);
 
     sendVerificationEmail(data.email, token);
 
@@ -220,10 +217,10 @@ async function sendVerificationEmail(userEmail, token) {
 
 /* ---------------------------------------------------------- */
 
- function verify(req, res){
+function verify(req, res) {
 
-    if (req.session.isVerified){
-        res.redirect("/");
+    if (req.session.isVerified) {
+        return res.redirect("/");
     }
 
     const token = req.query.token;
@@ -242,6 +239,8 @@ async function sendVerificationEmail(userEmail, token) {
 
     users.push(userFind);
     fs.writeFileSync("users.json", JSON.stringify(users, null, 3));
+
+    req.session.loggedIn = true
 
     res.send(render("Välkommen " + escape(userFind.email), req.session));
 
@@ -277,7 +276,7 @@ function createService(req, res) {
             data.id = generateId();
             data.userId = req.session.userId;
             let services = JSON.parse(fs.readFileSync("services.json").toString());
-            
+
             services.push(data);
 
             fs.writeFileSync("services.json", JSON.stringify(services, null, 3));

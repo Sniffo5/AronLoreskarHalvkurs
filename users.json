@@ -8,10 +8,10 @@
    },
    {
       "email": "tmp@loreskar.se",
-      "password": "$2a$12$FrnJzpVxbFm4J09PFgTfQeqvXgjY1OUvEwlNiwQlmmNeYFryCb59.",
-      "token": "d9ccc9a9-7e47-4765-a5af-10c834cf1353",
+      "password": "$2a$12$/V8mQzIERq8lYREZK5BmvOvSul9aogRZQAER4WI7Syw8k4zG3AdIG",
+      "token": "b729d94e-1f27-4c07-ad04-44ed6c3833a3",
       "isVerified": true,
-      "id": "1067a284-7c0d-4a50-ad1c-cc3d6b18c4c2",
+      "id": "4fb69a3a-affb-4c43-8be2-458731b4f929",
       "isAdmin": false
    }
 ]
