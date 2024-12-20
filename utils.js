@@ -40,7 +40,7 @@ const transporter = nodemailer.createTransport({
         });
         console.log('Email sent successfully');
       } catch (error) {
-        console.error('Error sending email:', error);
+        console.log('Error sending email:', error);
       }
   }
 
